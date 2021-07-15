@@ -42,7 +42,10 @@ fi
 cd example
 
 at_least_one_failure=false
-for version in "${meteor_versions[@]}"; do
+for versions in "${meteor_versions[@]}"; do
+	version="${versions%___*}"
+	node_version="${versions#*___}"
+	
 	printf "${YELLOW}Testing Docker image geoffreybooth/meteor-base:${version}...${NC}\n"
 	SECONDS=0
 
@@ -54,27 +57,6 @@ for version in "${meteor_versions[@]}"; do
 	dockerfile='default.dockerfile'
 	if [[ "${version}" == 1.6* ]] || [[ "${version}" == 1.7* ]] || [[ "${version}" == 1.8 ]] || [[ "${version}" == 1.8.0* ]]; then
 		dockerfile='app-with-native-dependencies.dockerfile'
-	fi
-
-	# Versions 1.8.x and below need Node 8.17.0
-	if [[ "${version}" == 1.6* ]] || [[ "${version}" == 1.7* ]] || [[ "${version}" == 1.8* ]]; then
-		node_version='8.17.0'
-
-	# Versions 1.9 through 2.2 need Node 12.22.1
-	elif [[ "${version}" == 1.9* ]] || [[ "${version}" == 1.10* ]] || [[ "${version}" == 1.11* ]] || [[ "${version}" == 1.12* ]] || [[ "${version}" == 2.0* ]] || [[ "${version}" == 2.1* ]] || [[ "${version}" == 2.2 ]]; then
-		node_version='12.22.1'
-		
-	# Versions 2.2.1 need Node 12.22.2
-	elif [[ "${version}" == 2.2.1 ]]; then
-		node_version='12.22.2'
-		
-	# Versions 2.3 need Node 14.17.1
-	elif [[ "${version}" == 2.3 ]]; then
-		node_version='14.17.1'
-
-	# Versions >= 2.3.1 need Node 14.17.3
-	else
-		node_version='14.17.3'
 	fi
 
 	echo 'Creating test app...'

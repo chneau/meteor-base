@@ -33,7 +33,8 @@ elif [[ "${1-x}" != x ]]; then
 fi
 
 
-for version in "${meteor_versions[@]}"; do
+for versions in "${meteor_versions[@]}"; do
+	version="${versions%___*}"
 	printf "${GREEN}Building Docker base image for Meteor ${version}...${NC}\n"
 	if ! build $version; then
 		printf "${RED}Error building Docker base image for Meteor ${version}${NC}\n"
